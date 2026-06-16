@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
-<mapper namespace="com.cinema.persistance.mybatis.dao.MovieDao">
+<configuration>
 
-    <select id="findAll" resultType="com.cinema.domain.Movie">
-        SELECT id,
-               title,
-               duration_minutes AS durationMinutes,
-               genres           AS genres
-        FROM movies
-    </select>
-    <select id="findById"
-            parameterType="long"
-            resultType="com.cinema.domain.Movie">
+    <properties resource="config.properties"/>
 
-        SELECT
-            id,
-            title,
-            duration_minutes AS durationMinutes,
-            genres AS genres
-        FROM movies
-        WHERE id = #{id}
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
 
-    </select>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${db.driver}"/>
+                <property name="url" value="${db.url}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
 
-</mapper>
+    <mappers>
+        <mapper resource="mappers/HallMapper.xml"/>
+        <mapper resource="mappers/SeatMapper.xml"/>
+        <mapper resource="mappers/ReservationMapper.xml"/>
+        <mapper resource="mappers/ReservationSeatMapper.xml"/>
+        <mapper resource="mappers/movie-mapper.xml"/>
+        <mapper resource="mappers/session-mapper.xml"/>
+    </mappers>
+
+</configuration>

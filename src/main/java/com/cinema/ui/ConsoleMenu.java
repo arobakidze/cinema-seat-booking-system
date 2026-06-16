@@ -15,71 +15,91 @@ public class ConsoleMenu {
 
     private final ReservationService reservationService;
     private final SeatAllocationService seatAllocationService;
+    private final Scanner scanner;
 
     public ConsoleMenu(ReservationService reservationService,
                        SeatAllocationService seatAllocationService) {
+        this(reservationService, seatAllocationService, new Scanner(System.in));
+    }
+
+    public ConsoleMenu(ReservationService reservationService,
+                       SeatAllocationService seatAllocationService,
+                       Scanner scanner) {
         this.reservationService = reservationService;
         this.seatAllocationService = seatAllocationService;
+        this.scanner = scanner;
     }
 
     public void run() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            boolean running = true;
+        runMenu(null);
+    }
 
-            while (running) {
-                printMenu();
-                System.out.print("Choose an option: ");
-                String choice = scanner.nextLine().trim();
+    public void runForSession(Long sessionId) {
+        runMenu(sessionId);
+    }
 
-                try {
-                    switch (choice) {
-                        case "1":
-                            handleListAvailableSeats(scanner);
-                            break;
-                        case "2":
-                            handleBookSpecificSeats(scanner);
-                            break;
-                        case "3":
-                            handleSuggestBestSeats(scanner);
-                            break;
-                        case "4":
-                            handleBookBestSeats(scanner);
-                            break;
-                        case "5":
-                            handleCancelReservation(scanner);
-                            break;
-                        case "6":
-                            handleFindReservation(scanner);
-                            break;
-                        case "0":
-                            running = false;
-                            System.out.println("Goodbye.");
-                            break;
-                        default:
-                            System.out.println("Unknown option. Please try again.");
-                    }
-                } catch (RuntimeException e) {
-                    System.out.println("Error: " + e.getMessage());
+    private void runMenu(Long selectedSessionId) {
+        boolean running = true;
+
+        while (running) {
+            printMenu(selectedSessionId);
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine().trim();
+
+            try {
+                switch (choice) {
+                    case "1":
+                        handleListAvailableSeats(selectedSessionId);
+                        break;
+                    case "2":
+                        handleBookSpecificSeats(selectedSessionId);
+                        break;
+                    case "3":
+                        handleSuggestBestSeats(selectedSessionId);
+                        break;
+                    case "4":
+                        handleBookBestSeats(selectedSessionId);
+                        break;
+                    case "5":
+                        handleCancelReservation();
+                        break;
+                    case "6":
+                        handleFindReservation();
+                        break;
+                    case "0":
+                        running = false;
+                        break;
+                    default:
+                        System.out.println("Unknown option. Please try again.");
+                        break;
                 }
-
-                System.out.println();
+            } catch (RuntimeException e) {
+                System.out.println("Error: " + e.getMessage());
             }
+
+            System.out.println();
         }
     }
 
-    private void printMenu() {
-        System.out.println("=== Cinema Seat Booking ===");
-        System.out.println("1. List available seats by session ID");
+    private void printMenu(Long selectedSessionId) {
+        System.out.println();
+        System.out.println("=== Booking Menu ===");
+
+        if (selectedSessionId != null) {
+            System.out.println("Selected session ID: " + selectedSessionId);
+        }
+
+        System.out.println("1. List available seats");
         System.out.println("2. Book specific seats");
         System.out.println("3. Suggest best seats for a group");
         System.out.println("4. Book best available seats for a group");
         System.out.println("5. Cancel reservation");
         System.out.println("6. Find reservation by ID");
-        System.out.println("0. Exit");
+        System.out.println("0. Back");
     }
 
-    private void handleListAvailableSeats(Scanner scanner) {
-        Long sessionId = readLong(scanner, "Enter session ID: ");
+    private void handleListAvailableSeats(Long selectedSessionId) {
+        Long sessionId = resolveSessionId(selectedSessionId);
         List<Seat> availableSeats = seatAllocationService.listAvailableSeats(sessionId);
 
         if (availableSeats.isEmpty()) {
@@ -90,23 +110,25 @@ public class ConsoleMenu {
         availableSeats.forEach(seat -> System.out.println(formatSeat(seat)));
     }
 
-    private void handleBookSpecificSeats(Scanner scanner) {
-        Long sessionId = readLong(scanner, "Enter session ID: ");
+    private void handleBookSpecificSeats(Long selectedSessionId) {
+        Long sessionId = resolveSessionId(selectedSessionId);
+
         System.out.print("Enter customer name: ");
         String customerName = scanner.nextLine().trim();
 
-        System.out.print("Enter seat IDs separated by commas (example: 1,2,3): ");
+        System.out.print("Enter seat IDs separated by commas, example 1,2,3: ");
         List<Long> seatIds = parseIdList(scanner.nextLine());
 
         Reservation reservation = reservationService.bookSeats(sessionId, customerName, seatIds);
         printReservation(reservation);
     }
 
-    private void handleSuggestBestSeats(Scanner scanner) {
-        Long sessionId = readLong(scanner, "Enter session ID: ");
-        int groupSize = readInt(scanner, "Enter group size: ");
+    private void handleSuggestBestSeats(Long selectedSessionId) {
+        Long sessionId = resolveSessionId(selectedSessionId);
+        int groupSize = readInt("Enter group size: ");
 
         List<Seat> suggestedSeats = seatAllocationService.suggestBestSeats(sessionId, groupSize);
+
         if (suggestedSeats.isEmpty()) {
             System.out.println("No consecutive seats found for this group size.");
             return;
@@ -116,24 +138,31 @@ public class ConsoleMenu {
         suggestedSeats.forEach(seat -> System.out.println(formatSeat(seat)));
     }
 
-    private void handleBookBestSeats(Scanner scanner) {
-        Long sessionId = readLong(scanner, "Enter session ID: ");
+    private void handleBookBestSeats(Long selectedSessionId) {
+        Long sessionId = resolveSessionId(selectedSessionId);
+
         System.out.print("Enter customer name: ");
         String customerName = scanner.nextLine().trim();
-        int groupSize = readInt(scanner, "Enter group size: ");
 
-        Reservation reservation = seatAllocationService.bookBestAvailableSeats(sessionId, customerName, groupSize);
+        int groupSize = readInt("Enter group size: ");
+
+        Reservation reservation = seatAllocationService.bookBestAvailableSeats(
+                sessionId,
+                customerName,
+                groupSize
+        );
+
         printReservation(reservation);
     }
 
-    private void handleCancelReservation(Scanner scanner) {
-        Long reservationId = readLong(scanner, "Enter reservation ID to cancel: ");
+    private void handleCancelReservation() {
+        Long reservationId = readLong("Enter reservation ID to cancel: ");
         reservationService.cancelReservation(reservationId);
         System.out.println("Reservation cancelled successfully.");
     }
 
-    private void handleFindReservation(Scanner scanner) {
-        Long reservationId = readLong(scanner, "Enter reservation ID: ");
+    private void handleFindReservation() {
+        Long reservationId = readLong("Enter reservation ID: ");
         Optional<Reservation> reservation = reservationService.findById(reservationId);
 
         if (reservation.isPresent()) {
@@ -143,14 +172,34 @@ public class ConsoleMenu {
         }
     }
 
-    private Long readLong(Scanner scanner, String prompt) {
-        System.out.print(prompt);
-        return Long.parseLong(scanner.nextLine().trim());
+    private Long resolveSessionId(Long selectedSessionId) {
+        if (selectedSessionId != null) {
+            return selectedSessionId;
+        }
+
+        return readLong("Enter session ID: ");
     }
 
-    private int readInt(Scanner scanner, String prompt) {
-        System.out.print(prompt);
-        return Integer.parseInt(scanner.nextLine().trim());
+    private Long readLong(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return Long.parseLong(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    private int readInt(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
     }
 
     private List<Long> parseIdList(String raw) {
@@ -168,7 +217,7 @@ public class ConsoleMenu {
     }
 
     private void printReservation(Reservation reservation) {
-        System.out.println("Reservation created/found:");
+        System.out.println("Reservation:");
         System.out.println("Reservation ID: " + reservation.getId());
         System.out.println("Session ID: " + reservation.getSessionId());
         System.out.println("Customer: " + reservation.getCustomerName());

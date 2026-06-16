@@ -4,6 +4,9 @@ import com.cinema.domain.Movie;
 import com.cinema.domain.MovieSession;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
+import com.cinema.service.ReservationService;
+import com.cinema.service.SeatAllocationService;
+import com.cinema.ui.ConsoleMenu;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,16 +15,23 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CinemaApp {
+
     private static final Logger LOGGER = LogManager.getLogger(CinemaApp.class);
 
     private final MovieService movieService;
     private final MovieSessionService sessionService;
+    private final ReservationService reservationService;
+    private final SeatAllocationService seatAllocationService;
     private final Scanner scanner = new Scanner(System.in);
 
     public CinemaApp(MovieService movieService,
-                     MovieSessionService sessionService) {
+                     MovieSessionService sessionService,
+                     ReservationService reservationService,
+                     SeatAllocationService seatAllocationService) {
         this.movieService = movieService;
         this.sessionService = sessionService;
+        this.reservationService = reservationService;
+        this.seatAllocationService = seatAllocationService;
     }
 
     public void start() {
@@ -36,42 +46,47 @@ public class CinemaApp {
                     break;
 
                 case 2:
-                    LOGGER.info("project got closed");
-                    System.out.println("👋 Goodbye!");
+                    openBookingMenuWithoutMovieSelection();
+                    break;
+
+                case 0:
+                    LOGGER.info("Project closed");
+                    System.out.println("Goodbye!");
                     return;
 
                 default:
                     LOGGER.error("Invalid choice on cinema menu");
-                    System.out.println("❌ Invalid option");
+                    System.out.println("Invalid option.");
                     break;
             }
         }
     }
 
-    // ---------------- MAIN MENU ----------------
     private void printMainMenu() {
-        LOGGER.info("cinema menu shown");
-        System.out.println("\n🎬 === CINEMA SYSTEM ===");
-        System.out.println("1. View Movies");
-        System.out.println("2. Exit");
+        LOGGER.info("Cinema menu shown");
+        System.out.println();
+        System.out.println("=== CINEMA SYSTEM ===");
+        System.out.println("1. View movies and choose session");
+        System.out.println("2. Open booking menu by session ID");
+        System.out.println("0. Exit");
         System.out.print("Choose: ");
     }
 
-    // ---------------- MOVIES ----------------
     private void moviesMenu() {
-
         while (true) {
-
             List<Movie> movies = movieService.getAllMovies();
 
-            LOGGER.info("movies menu shown");
-            System.out.println("\n🎥 === MOVIES ===");
+            LOGGER.info("Movies menu shown");
+            System.out.println();
+            System.out.println("=== MOVIES ===");
 
-            for (Movie movie : movies) {
-                LOGGER.info("movie: {}", movie.getTitle());
-                System.out.println(
-                        movie.toString()
-                );
+            if (movies == null || movies.isEmpty()) {
+                System.out.println("No movies found.");
+                return;
+            }
+
+            for (int i = 0; i < movies.size(); i++) {
+                System.out.println((i + 1) + ". " + movies.get(i));
             }
 
             System.out.println("0. Back");
@@ -85,89 +100,99 @@ public class CinemaApp {
 
             if (choice < 1 || choice > movies.size()) {
                 LOGGER.error("Invalid choice on movies menu");
-                System.out.println("❌ Invalid choice");
+                System.out.println("Invalid movie choice.");
                 continue;
             }
 
             Movie selectedMovie = movies.get(choice - 1);
-
-            sessionsMenu(selectedMovie.getId());
+            sessionsMenu(selectedMovie);
         }
     }
 
-    // ---------------- SESSIONS ----------------
-    private void sessionsMenu(long movieId) {
-
-        List<MovieSession> sessions = sessionService.getSessionsByMovie(movieId);
-
-        if (sessions == null || sessions.isEmpty()) {
-            LOGGER.info("No sessions found");
-            System.out.println("⚠ No sessions available.");
-            return;
-        }
-
+    private void sessionsMenu(Movie selectedMovie) {
         while (true) {
+            List<MovieSession> sessions = sessionService.getSessionsByMovie(selectedMovie.getId());
 
-            LOGGER.info("session menu shown");
-            System.out.println("\n🎞 === SESSIONS ===");
-
-            List<Long> ids = new ArrayList<>();
-
-            for (MovieSession s : sessions) {
-                ids.add(s.getId());
-                LOGGER.info("{}. movie: {}, hall: {}, start time: {}", s.getId(), movieService.getMovie(movieId).getTitle(), s.getHallId(), s.getStartTime());
-                System.out.println(s.getId() + ". movie: "
-                        + movieService.getMovie(movieId).getTitle() +
-                        ", hall: " + s.getHallId() +
-                        ",start time: " + s.getStartTime());
-            }
-
-            System.out.println("0. Back");
-            System.out.print("Select session: ");
-
-            boolean isValideSessionId = false;
-            long sessionId = readLong();
-            for (Long id : ids) {
-                if (id == sessionId) {
-                    isValideSessionId = true;
-                    break;
-                }
-            }
-
-            if (!isValideSessionId && sessionId != 0) {
-                LOGGER.error("Invalid choice on sessions menu");
-                System.out.println("❌ Invalid choice");
-                continue;
-            }
-            else if (sessionId == 0) {
+            if (sessions == null || sessions.isEmpty()) {
+                LOGGER.info("No sessions found for movie {}", selectedMovie.getTitle());
+                System.out.println("No sessions available for this movie.");
                 return;
             }
 
-            System.out.println("\n✅ Selected session ID: " + sessionId);
-            bookingModule(movieId, sessionId);
-            return;
+            LOGGER.info("Sessions menu shown");
+            System.out.println();
+            System.out.println("=== SESSIONS FOR: " + selectedMovie.getTitle() + " ===");
+
+            List<Long> sessionIds = new ArrayList<>();
+
+            for (MovieSession session : sessions) {
+                sessionIds.add(session.getId());
+
+                System.out.println(
+                        session.getId()
+                                + ". Hall: " + session.getHallId()
+                                + ", Start time: " + session.getStartTime()
+                );
+            }
+
+            System.out.println("0. Back");
+            System.out.print("Select session ID: ");
+
+            long sessionId = readLong();
+
+            if (sessionId == 0) {
+                return;
+            }
+
+            if (!sessionIds.contains(sessionId)) {
+                LOGGER.error("Invalid session choice");
+                System.out.println("Invalid session ID.");
+                continue;
+            }
+
+            bookingModule(sessionId);
         }
     }
 
-    public void bookingModule(long movieId, long sessionId) {
-        System.out.println("➡ Handing over to booking module...");
-        System.exit(0);
+    private void bookingModule(Long sessionId) {
+        LOGGER.info("Booking module opened for session {}", sessionId);
+
+        ConsoleMenu consoleMenu = new ConsoleMenu(
+                reservationService,
+                seatAllocationService,
+                scanner
+        );
+
+        consoleMenu.runForSession(sessionId);
     }
 
-    // ---------------- SAFE INPUT ----------------
+    private void openBookingMenuWithoutMovieSelection() {
+        ConsoleMenu consoleMenu = new ConsoleMenu(
+                reservationService,
+                seatAllocationService,
+                scanner
+        );
+
+        consoleMenu.run();
+    }
+
     private int readInt() {
-        while (!scanner.hasNextInt()) {
-            System.out.println("❌ Enter a number!");
-            scanner.next();
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.print("Enter a valid number: ");
+            }
         }
-        return scanner.nextInt();
     }
 
     private long readLong() {
-        while (!scanner.hasNextLong()) {
-            System.out.println("❌ Enter a valid number!");
-            scanner.next();
+        while (true) {
+            try {
+                return Long.parseLong(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.print("Enter a valid number: ");
+            }
         }
-        return scanner.nextLong();
     }
 }

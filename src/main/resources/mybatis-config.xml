@@ -6,6 +6,10 @@
 
     <properties resource="config.properties"/>
 
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
@@ -23,6 +27,8 @@
         <mapper resource="mappers/SeatMapper.xml"/>
         <mapper resource="mappers/ReservationMapper.xml"/>
         <mapper resource="mappers/ReservationSeatMapper.xml"/>
+        <mapper resource="mappers/movie-mapper.xml"/>
+        <mapper resource="mappers/session-mapper.xml"/>
     </mappers>
 
 </configuration>
