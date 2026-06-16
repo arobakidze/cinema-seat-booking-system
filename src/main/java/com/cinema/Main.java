@@ -1,27 +1,18 @@
 package com.cinema;
 
-import com.cinema.controller.CinemaApp;
-import com.cinema.persistence.mybatis.dao.MovieDao;
-import com.cinema.persistence.mybatis.dao.MovieSessionDao;
-import com.cinema.service.MovieService;
-import com.cinema.service.MovieSessionService;
-import com.cinema.util.MyBatisUtil;
-import org.apache.ibatis.session.SqlSession;
+import com.cinema.service.ReservationService;
+import com.cinema.service.SeatAllocationService;
+import com.cinema.service.impl.ReservationServiceImpl;
+import com.cinema.service.impl.SeatAllocationServiceImpl;
+import com.cinema.ui.ConsoleMenu;
 
 public class Main {
 
     public static void main(String[] args) {
+        ReservationService reservationService = new ReservationServiceImpl();
+        SeatAllocationService seatAllocationService = new SeatAllocationServiceImpl(reservationService);
 
-        try (SqlSession session = MyBatisUtil.getSession()) {
-
-            MovieDao movieDao = session.getMapper(MovieDao.class);
-            MovieSessionDao movieSessionDao = session.getMapper(MovieSessionDao.class);
-
-            MovieService movieService = new MovieService(movieDao);
-            MovieSessionService movieSessionService = new MovieSessionService(movieSessionDao);
-
-            CinemaApp app = new CinemaApp(movieService, movieSessionService);
-            app.start();
-        }
+        ConsoleMenu consoleMenu = new ConsoleMenu(reservationService, seatAllocationService);
+        consoleMenu.run();
     }
 }

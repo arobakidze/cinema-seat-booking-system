@@ -25,11 +25,25 @@
     </select>
 
     <select id="findAvailableBySessionId" parameterType="Long" resultMap="seatResultMap">
-        SELECT s.* FROM seats s
-        JOIN cinema_halls h ON s.hall_id = h.id
-        JOIN movie_sessions ms ON ms.hall_id = h.id
-        WHERE ms.id = #{sessionId} AND s.is_booked = false
+        SELECT
+        s.id,
+        s.hall_id,
+        s.row_num,
+        s.seat_number,
+        FALSE AS is_booked
+        FROM seats s
+        JOIN movie_sessions ms ON ms.hall_id = s.hall_id
+        WHERE ms.id = #{sessionId}
+        AND NOT EXISTS (
+        SELECT 1
+        FROM reservation_seats rs
+        JOIN reservations r ON r.id = rs.reservation_id
+        WHERE r.session_id = ms.id
+        AND rs.seat_id = s.id
+        )
+        ORDER BY s.row_num, s.seat_number
     </select>
+
 
     <insert id="insert" parameterType="com.cinema.domain.Seat" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO seats (hall_id, row_num, seat_number, is_booked)

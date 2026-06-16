@@ -5,9 +5,6 @@
 <configuration>
 
     <properties resource="config.properties"/>
-    <typeAliases>
-        <package name="com.cinema.domain"/>
-    </typeAliases>
 
     <environments default="development">
         <environment id="development">
@@ -24,8 +21,8 @@
     <mappers>
         <mapper resource="mappers/HallMapper.xml"/>
         <mapper resource="mappers/SeatMapper.xml"/>
-        <mapper resource="mappers/movie-mapper.xml"/>
-        <mapper resource="mappers/session-mapper.xml"/>
+        <mapper resource="mappers/ReservationMapper.xml"/>
+        <mapper resource="mappers/ReservationSeatMapper.xml"/>
     </mappers>
 
 </configuration>
