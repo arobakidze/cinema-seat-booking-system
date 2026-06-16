@@ -54,6 +54,24 @@ public class CinemaApp {
         System.out.print("Choose: ");
     }
 
+//    private void allSessionsMenu(){
+//        while (true) {
+//            List<MovieSession> sessions = sessionService.getAllSessions();
+//
+//            LOGGER.info("ssessions menu shown");
+//            System.out.println("\n🎥 === SESSIONS ===");
+//
+//            for (MovieSession s : sessions) {
+//                ids.add(s.getId());
+//                LOGGER.info("{}. movie: {}, hall: {}, start time: {}", s.getId(), movieService.getMovie(movieId).getTitle(), s.getHallId(), s.getStartTime());
+//                System.out.println(s.getId() + ". movie: "
+//                        + movieService.getMovie(movieId).getTitle() +
+//                        ", hall: " + s.getHallId() +
+//                        ",start time: " + s.getStartTime());
+//            }
+//        }
+//    }
+
     // ---------------- MOVIES ----------------
     private void moviesMenu() {
 

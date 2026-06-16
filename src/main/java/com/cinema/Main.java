@@ -1,8 +1,8 @@
 package com.cinema;
 
 import com.cinema.controller.CinemaApp;
-import com.cinema.persistance.mybatis.dao.MovieDao;
-import com.cinema.persistance.mybatis.dao.MovieSessionDao;
+import com.cinema.persistence.mybatis.dao.MovieDao;
+import com.cinema.persistence.mybatis.dao.MovieSessionDao;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
 import com.cinema.util.MyBatisUtil;

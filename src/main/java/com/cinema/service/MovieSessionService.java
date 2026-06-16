@@ -1,7 +1,7 @@
 package com.cinema.service;
 
 import com.cinema.domain.MovieSession;
-import com.cinema.persistance.mybatis.dao.MovieSessionDao;
+import com.cinema.persistence.mybatis.dao.MovieSessionDao;
 
 import java.util.List;
 
@@ -19,4 +19,6 @@ public class MovieSessionService {
     public MovieSession getSession(Long id) {
         return sessionDao.findById(id);
     }
+
+    public List<MovieSession> getAllSessions() { return sessionDao.findAll();}
 }

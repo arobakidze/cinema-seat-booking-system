@@ -8,5 +8,6 @@ public interface MovieSessionDao {
 
     List<MovieSession> findByMovieId(Long movieId);
     MovieSession findById(Long id);
+
     List<MovieSession> findAll();
 }

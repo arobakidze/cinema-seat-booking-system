@@ -1,7 +1,7 @@
 package com.cinema.service;
 
 import com.cinema.domain.Movie;
-import com.cinema.persistance.mybatis.dao.MovieDao;
+import com.cinema.persistence.mybatis.dao.MovieDao;
 
 import java.util.List;
 

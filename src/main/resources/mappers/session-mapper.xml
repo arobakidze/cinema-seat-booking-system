@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.cinema.persistance.mybatis.dao.MovieSessionDao">
+<mapper namespace="com.cinema.persistence.mybatis.dao.MovieSessionDao">
 
     <select id="findByMovieId" parameterType="long" resultType="com.cinema.domain.MovieSession">
         SELECT id, movie_id AS movieId, hall_id AS hallId, start_time AS startTime FROM movie_sessions
@@ -13,5 +13,7 @@
         SELECT id, movie_id AS movieId, hall_id AS hallId, start_time AS startTime  FROM movie_sessions
         WHERE id = #{id}
     </select>
-
+    <select id="findAll" resultType="com.cinema.domain.MovieSession">
+        SELECT id, movie_id AS movieId, hall_id AS hallId, start_time AS startTime  FROM movie_sessions
+    </select>
 </mapper>
