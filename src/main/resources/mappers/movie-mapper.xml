@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cinema.persistance.mybatis.dao.MovieDao">
+
+    <select id="findAll" resultType="com.cinema.domain.Movie">
+        SELECT id,
+               title,
+               duration_minutes AS durationMinutes,
+               genres           AS genres
+        FROM movies
+    </select>
+    <select id="findById"
+            parameterType="long"
+            resultType="com.cinema.domain.Movie">
+
+        SELECT
+            id,
+            title,
+            duration_minutes AS durationMinutes,
+            genres AS genres
+        FROM movies
+        WHERE id = #{id}
+
+    </select>
+
+</mapper>

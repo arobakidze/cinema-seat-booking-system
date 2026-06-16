@@ -1,48 +1,54 @@
 CREATE DATABASE IF NOT EXISTS cinema;
 USE cinema;
 
-CREATE TABLE cinema_halls (
-                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                              name VARCHAR(100) NOT NULL,
-                              total_rows INT NOT NULL,
-                              seats_per_row INT NOT NULL
+CREATE TABLE cinema_halls
+(
+    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(100) NOT NULL,
+    total_rows    INT          NOT NULL,
+    seats_per_row INT          NOT NULL
 );
 
-CREATE TABLE seats (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       hall_id BIGINT NOT NULL,
-                       row_num INT NOT NULL,
-                       seat_number INT NOT NULL,
-                       is_booked BOOLEAN DEFAULT FALSE,
-                       FOREIGN KEY (hall_id) REFERENCES cinema_halls(id)
+CREATE TABLE seats
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hall_id     BIGINT NOT NULL,
+    row_num     INT    NOT NULL,
+    seat_number INT    NOT NULL,
+    is_booked   BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (hall_id) REFERENCES cinema_halls (id)
 );
 
-CREATE TABLE movies (
-                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                        title VARCHAR(200) NOT NULL,
-                        duration INT NOT NULL
+CREATE TABLE reservations
+(
+    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    session_id    BIGINT       NOT NULL,
+    customer_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES movie_sessions (id)
 );
 
-CREATE TABLE movie_sessions (
-                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                movie_id BIGINT NOT NULL,
-                                hall_id BIGINT NOT NULL,
-                                date_time DATETIME NOT NULL,
-                                FOREIGN KEY (movie_id) REFERENCES movies(id),
-                                FOREIGN KEY (hall_id) REFERENCES cinema_halls(id)
+CREATE TABLE reservation_seats
+(
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    reservation_id BIGINT NOT NULL,
+    seat_id        BIGINT NOT NULL,
+    FOREIGN KEY (reservation_id) REFERENCES reservations (id),
+    FOREIGN KEY (seat_id) REFERENCES seats (id)
+);
+CREATE TABLE movies
+(
+    id               BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title            VARCHAR(255) NOT NULL,
+    duration_minutes INT          NOT NULL,
+    genres           VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE reservations (
-                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                              session_id BIGINT NOT NULL,
-                              customer_name VARCHAR(100) NOT NULL,
-                              FOREIGN KEY (session_id) REFERENCES movie_sessions(id)
-);
-
-CREATE TABLE reservation_seats (
-                                   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                   reservation_id BIGINT NOT NULL,
-                                   seat_id BIGINT NOT NULL,
-                                   FOREIGN KEY (reservation_id) REFERENCES reservations(id),
-                                   FOREIGN KEY (seat_id) REFERENCES seats(id)
+CREATE TABLE movie_sessions
+(
+    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    movie_id   BIGINT   NOT NULL,
+    hall_id    BIGINT   NOT NULL,
+    start_time DATETIME NOT NULL,
+    FOREIGN KEY (movie_id) REFERENCES movies (id),
+    FOREIGN KEY (hall_id) REFERENCES cinema_halls (id)
 );
