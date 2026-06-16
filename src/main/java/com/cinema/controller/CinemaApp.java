@@ -2,6 +2,7 @@ package com.cinema.controller;
 
 import com.cinema.domain.Movie;
 import com.cinema.domain.MovieSession;
+import com.cinema.domain.Seat;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
 import com.cinema.service.ReservationService;
@@ -49,6 +50,10 @@ public class CinemaApp {
                     openBookingMenuWithoutMovieSelection();
                     break;
 
+                case 3:
+                    allAvailableSessionsMenu();
+                    break;
+
                 case 0:
                     LOGGER.info("Project closed");
                     System.out.println("Goodbye! ");
@@ -68,8 +73,72 @@ public class CinemaApp {
         System.out.println("=== CINEMA SYSTEM ===");
         System.out.println("1. View movies and choose session \uD83C\uDF7F ");
         System.out.println("2. Open booking menu by session ID \uD83C\uDF9F\uFE0F");
+        System.out.println("3. View available sessions and seats \uD83C\uDF7F ");
         System.out.println("0. Exit \uD83E\uDD7A");
         System.out.print("Choose: ");
+    }
+
+    private void allAvailableSessionsMenu() {
+        while (true) {
+            List<MovieSession> sessions = sessionService.findAll();
+
+            LOGGER.info("available sessions menu shown");
+            System.out.println("\n🎥 === AVAILABLE SESSIONS ===");
+            List<Long> sessionIds = new ArrayList<>();
+
+            for (MovieSession s : sessions) {
+                List<Seat> availableSeats = seatAllocationService.listAvailableSeats(s.getId());
+                for (Seat seat : availableSeats) {
+                    if (!seat.getIsBooked()) {
+                        sessionIds.add(s.getId());
+                        LOGGER.info("{}. movie: {}, hall: {}, start time: {}", s.getId(), movieService.getMovie(s.getMovieId()).getTitle(), s.getHallId(), s.getStartTime());
+
+                        System.out.println(s.getId() + ". movie: {"
+                                + movieService.getMovie(s.getMovieId()).getTitle() +
+                                "}, hall: {" + s.getHallId()
+                                + "}, there's {" + availableSeats.size() + "} available seats"
+                                + ",start time: {" + s.getStartTime() + "}");
+                        break;
+                    }
+                }
+
+            }
+            System.out.println("0. Back");
+            System.out.print("Choose sessions: ");
+
+            Long choice = readLong();
+
+            if (choice == 0) {
+                return;
+            }
+
+            if (!sessionIds.contains(choice)) {
+                LOGGER.error("Invalid session choice");
+                System.out.println("Invalid session ID.");
+                continue;
+            }
+
+            availableSeatsMenu(choice);
+        }
+    }
+
+    public void availableSeatsMenu(Long sessionId) {
+
+        MovieSession session = sessionService.findById(sessionId);
+
+        System.out.println("Available seats for " + movieService.getMovie(session.getMovieId()).getTitle());
+        System.out.println("Available seats: ");
+        List<Seat> availableSeats = seatAllocationService.listAvailableSeats(sessionId);
+        for (Seat seat : availableSeats) {
+            if (seat.getIsBooked()) continue;
+            System.out.println(seat.getId() + ". hall-{" + seat.getHallId() + "}, seat number-{" + seat.getSeatNumber() + "}, row number-{" + seat.getRowNum() + "}");
+        }
+
+        System.out.println("type 0 to go back");
+        Long choice = readLong();
+
+        if (choice == 0) {
+        }
     }
 
     private void moviesMenu() {
