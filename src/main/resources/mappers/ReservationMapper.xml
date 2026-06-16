@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cinema.persistence.mybatis.dao.ReservationDao">
+
+    <resultMap id="reservationResultMap" type="com.cinema.domain.Reservation">
+        <id property="id" column="id"/>
+        <result property="sessionId" column="session_id"/>
+        <result property="customerName" column="customer_name"/>
+    </resultMap>
+
+    <insert id="insert"
+            parameterType="com.cinema.domain.Reservation"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO reservations (session_id, customer_name)
+        VALUES (#{sessionId}, #{customerName})
+    </insert>
+
+    <select id="findById" parameterType="Long" resultMap="reservationResultMap">
+        SELECT id, session_id, customer_name
+        FROM reservations
+        WHERE id = #{id}
+    </select>
+
+    <select id="findBySessionId" parameterType="Long" resultMap="reservationResultMap">
+        SELECT id, session_id, customer_name
+        FROM reservations
+        WHERE session_id = #{sessionId}
+        ORDER BY id
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        DELETE FROM reservations
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
