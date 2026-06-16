@@ -1,34 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<configuration>
+<mapper namespace="com.cinema.persistence.mybatis.dao.MovieDao">
 
-    <properties resource="config.properties"/>
+    <resultMap id="movieResultMap" type="com.cinema.domain.Movie">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="durationMinutes" column="duration_minutes"/>
+        <result property="genres" column="genres"/>
+    </resultMap>
 
-    <settings>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
-    </settings>
+    <select id="findAll" resultMap="movieResultMap">
+        SELECT id, title, duration_minutes, genres
+        FROM movies
+        ORDER BY id
+    </select>
 
-    <environments default="development">
-        <environment id="development">
-            <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="${db.driver}"/>
-                <property name="url" value="${db.url}"/>
-                <property name="username" value="${db.username}"/>
-                <property name="password" value="${db.password}"/>
-            </dataSource>
-        </environment>
-    </environments>
+    <select id="findById" parameterType="long" resultMap="movieResultMap">
+        SELECT id, title, duration_minutes, genres
+        FROM movies
+        WHERE id = #{id}
+    </select>
 
-    <mappers>
-        <mapper resource="mappers/HallMapper.xml"/>
-        <mapper resource="mappers/SeatMapper.xml"/>
-        <mapper resource="mappers/ReservationMapper.xml"/>
-        <mapper resource="mappers/ReservationSeatMapper.xml"/>
-        <mapper resource="mappers/movie-mapper.xml"/>
-        <mapper resource="mappers/session-mapper.xml"/>
-    </mappers>
-
-</configuration>
+</mapper>
