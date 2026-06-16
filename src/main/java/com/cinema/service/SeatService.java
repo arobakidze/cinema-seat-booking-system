@@ -1,6 +1,7 @@
 package com.cinema.service;
 
 import com.cinema.domain.Seat;
+
 import java.util.List;
 
 public interface SeatService {

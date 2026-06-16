@@ -1,5 +1,7 @@
-CREATE DATABASE IF NOT EXISTS cinema;
-USE cinema;
+CREATE
+DATABASE IF NOT EXISTS cinema;
+USE
+cinema;
 
 DROP TABLE IF EXISTS reservation_seats;
 DROP TABLE IF EXISTS reservations;

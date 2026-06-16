@@ -1,6 +1,7 @@
 package com.cinema.persistence.mybatis.dao;
 
 import com.cinema.domain.CinemaHall;
+
 import java.util.List;
 
 public interface HallDao {

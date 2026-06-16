@@ -32,7 +32,8 @@
     </select>
 
     <delete id="delete" parameterType="Long">
-        DELETE FROM reservations
+        DELETE
+        FROM reservations
         WHERE id = #{id}
     </delete>
 

@@ -3,6 +3,7 @@ package com.cinema.service.impl;
 import com.cinema.domain.CinemaHall;
 import com.cinema.persistence.mybatis.dao.HallDao;
 import com.cinema.service.HallService;
+
 import java.util.List;
 
 public class HallServiceImpl implements HallService {

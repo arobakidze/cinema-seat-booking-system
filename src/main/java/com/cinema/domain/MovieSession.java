@@ -11,12 +11,13 @@ public class MovieSession {
 
     @Override
     public String toString() {
-        return  getId() + ". "
+        return getId() + ". "
                 + movieId
                 + " (" + hallId + " min)"
                 + " Genres: "
                 + startTime;
     }
+
     public Long getId() {
         return id;
     }

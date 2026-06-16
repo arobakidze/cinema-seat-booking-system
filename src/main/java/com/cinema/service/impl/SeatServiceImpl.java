@@ -3,6 +3,7 @@ package com.cinema.service.impl;
 import com.cinema.domain.Seat;
 import com.cinema.persistence.mybatis.dao.SeatDao;
 import com.cinema.service.SeatService;
+
 import java.util.List;
 
 public class SeatServiceImpl implements SeatService {

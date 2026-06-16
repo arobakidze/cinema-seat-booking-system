@@ -1,6 +1,7 @@
 package com.cinema.service;
 
 import com.cinema.domain.CinemaHall;
+
 import java.util.List;
 
 public interface HallService {

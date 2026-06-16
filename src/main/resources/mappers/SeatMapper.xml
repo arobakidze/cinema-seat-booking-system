@@ -34,14 +34,12 @@
     <select id="findAvailableBySessionId" parameterType="Long" resultMap="seatResultMap">
         SELECT s.*
         FROM seats s
-        JOIN movie_sessions ms ON ms.hall_id = s.hall_id
+                 JOIN movie_sessions ms ON ms.hall_id = s.hall_id
         WHERE ms.id = #{sessionId}
-        AND s.id NOT IN (
-        SELECT rs.seat_id
-        FROM reservation_seats rs
-        JOIN reservations r ON r.id = rs.reservation_id
-        WHERE r.session_id = #{sessionId}
-        )
+          AND s.id NOT IN (SELECT rs.seat_id
+                           FROM reservation_seats rs
+                                    JOIN reservations r ON r.id = rs.reservation_id
+                           WHERE r.session_id = #{sessionId})
         ORDER BY s.row_num, s.seat_number
     </select>
 
@@ -52,15 +50,16 @@
 
     <update id="update" parameterType="com.cinema.domain.Seat">
         UPDATE seats
-        SET hall_id = #{hallId},
-        row_num = #{rowNum},
-        seat_number = #{seatNumber},
-        is_booked = #{isBooked}
+        SET hall_id     = #{hallId},
+            row_num     = #{rowNum},
+            seat_number = #{seatNumber},
+            is_booked   = #{isBooked}
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="Long">
-        DELETE FROM seats
+        DELETE
+        FROM seats
         WHERE id = #{id}
     </delete>
 

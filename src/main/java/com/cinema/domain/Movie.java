@@ -20,16 +20,16 @@ public class Movie {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getGenres() {
         return genres;
     }
 
     public void setGenres(String genre) {
         this.genres = genre;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {

@@ -12,11 +12,14 @@
     </resultMap>
 
     <select id="findAll" resultMap="hallResultMap">
-        SELECT * FROM cinema_halls
+        SELECT *
+        FROM cinema_halls
     </select>
 
     <select id="findById" parameterType="Long" resultMap="hallResultMap">
-        SELECT * FROM cinema_halls WHERE id = #{id}
+        SELECT *
+        FROM cinema_halls
+        WHERE id = #{id}
     </select>
 
     <insert id="insert" parameterType="com.cinema.domain.CinemaHall" useGeneratedKeys="true" keyProperty="id">
@@ -25,12 +28,17 @@
     </insert>
 
     <update id="update" parameterType="com.cinema.domain.CinemaHall">
-        UPDATE cinema_halls SET name = #{name}, total_rows = #{totalRows}, seats_per_row = #{seatsPerRow}
+        UPDATE cinema_halls
+        SET name          = #{name},
+            total_rows    = #{totalRows},
+            seats_per_row = #{seatsPerRow}
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="Long">
-        DELETE FROM cinema_halls WHERE id = #{id}
+        DELETE
+        FROM cinema_halls
+        WHERE id = #{id}
     </delete>
 
 </mapper>

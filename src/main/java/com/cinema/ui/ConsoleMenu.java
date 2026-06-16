@@ -83,7 +83,7 @@ public class ConsoleMenu {
 
     private void printMenu(Long selectedSessionId) {
         System.out.println();
-        System.out.println("=== Booking Menu ===");
+        System.out.println("\uD83C\uDF9E\uFE0F Booking Menu \uD83C\uDF9E\uFE0F");
 
         if (selectedSessionId != null) {
             System.out.println("Selected session ID: " + selectedSessionId);

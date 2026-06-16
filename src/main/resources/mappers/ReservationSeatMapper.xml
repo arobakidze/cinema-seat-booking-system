@@ -21,20 +21,20 @@
     </insert>
 
     <select id="findSeatsByReservationId" parameterType="Long" resultMap="seatResultMap">
-        SELECT
-        s.id,
-        s.hall_id,
-        s.row_num,
-        s.seat_number,
-        TRUE AS is_booked
+        SELECT s.id,
+               s.hall_id,
+               s.row_num,
+               s.seat_number,
+               TRUE AS is_booked
         FROM seats s
-        JOIN reservation_seats rs ON rs.seat_id = s.id
+                 JOIN reservation_seats rs ON rs.seat_id = s.id
         WHERE rs.reservation_id = #{reservationId}
         ORDER BY s.row_num, s.seat_number
     </select>
 
     <delete id="deleteByReservationId" parameterType="Long">
-        DELETE FROM reservation_seats
+        DELETE
+        FROM reservation_seats
         WHERE reservation_id = #{reservationId}
     </delete>
 

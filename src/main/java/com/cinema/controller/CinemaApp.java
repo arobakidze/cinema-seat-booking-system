@@ -51,7 +51,7 @@ public class CinemaApp {
 
                 case 0:
                     LOGGER.info("Project closed");
-                    System.out.println("Goodbye!");
+                    System.out.println("Goodbye! ");
                     return;
 
                 default:
@@ -66,9 +66,9 @@ public class CinemaApp {
         LOGGER.info("Cinema menu shown");
         System.out.println();
         System.out.println("=== CINEMA SYSTEM ===");
-        System.out.println("1. View movies and choose session");
-        System.out.println("2. Open booking menu by session ID");
-        System.out.println("0. Exit");
+        System.out.println("1. View movies and choose session \uD83C\uDF7F ");
+        System.out.println("2. Open booking menu by session ID \uD83C\uDF9F\uFE0F");
+        System.out.println("0. Exit \uD83E\uDD7A");
         System.out.print("Choose: ");
     }
 
@@ -78,7 +78,7 @@ public class CinemaApp {
 
             LOGGER.info("Movies menu shown");
             System.out.println();
-            System.out.println("=== MOVIES ===");
+            System.out.println("=== \uD83C\uDF7F MOVIES \uD83C\uDF7F ===");
 
             if (movies == null || movies.isEmpty()) {
                 System.out.println("No movies found.");
@@ -124,7 +124,7 @@ public class CinemaApp {
 
             LOGGER.info("Sessions menu shown");
             System.out.println();
-            System.out.println("=== SESSIONS FOR: " + selectedMovie.getTitle() + " ===");
+            System.out.println("=== SESSIONS FOR: " + selectedMovie.getTitle() + " \uD83C\uDFA5 ===");
 
             List<Long> sessionIds = new ArrayList<>();
 

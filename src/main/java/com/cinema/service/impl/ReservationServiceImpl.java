@@ -10,12 +10,7 @@ import com.cinema.persistence.mybatis.dao.SeatDao;
 import com.cinema.service.ReservationService;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReservationServiceImpl implements ReservationService {
