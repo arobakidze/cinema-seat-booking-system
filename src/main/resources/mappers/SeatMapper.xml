@@ -13,37 +13,37 @@
     </resultMap>
 
     <select id="findAll" resultMap="seatResultMap">
-        SELECT * FROM seats
+        SELECT *
+        FROM seats
+        ORDER BY row_num, seat_number
     </select>
 
     <select id="findById" parameterType="Long" resultMap="seatResultMap">
-        SELECT * FROM seats WHERE id = #{id}
+        SELECT *
+        FROM seats
+        WHERE id = #{id}
     </select>
 
     <select id="findByHallId" parameterType="Long" resultMap="seatResultMap">
-        SELECT * FROM seats WHERE hall_id = #{hallId}
+        SELECT *
+        FROM seats
+        WHERE hall_id = #{hallId}
+        ORDER BY row_num, seat_number
     </select>
 
     <select id="findAvailableBySessionId" parameterType="Long" resultMap="seatResultMap">
-        SELECT
-        s.id,
-        s.hall_id,
-        s.row_num,
-        s.seat_number,
-        FALSE AS is_booked
+        SELECT s.*
         FROM seats s
         JOIN movie_sessions ms ON ms.hall_id = s.hall_id
         WHERE ms.id = #{sessionId}
-        AND NOT EXISTS (
-        SELECT 1
+        AND s.id NOT IN (
+        SELECT rs.seat_id
         FROM reservation_seats rs
         JOIN reservations r ON r.id = rs.reservation_id
-        WHERE r.session_id = ms.id
-        AND rs.seat_id = s.id
+        WHERE r.session_id = #{sessionId}
         )
         ORDER BY s.row_num, s.seat_number
     </select>
-
 
     <insert id="insert" parameterType="com.cinema.domain.Seat" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO seats (hall_id, row_num, seat_number, is_booked)
@@ -51,13 +51,17 @@
     </insert>
 
     <update id="update" parameterType="com.cinema.domain.Seat">
-        UPDATE seats SET hall_id = #{hallId}, row_num = #{rowNum},
-        seat_number = #{seatNumber}, is_booked = #{isBooked}
+        UPDATE seats
+        SET hall_id = #{hallId},
+        row_num = #{rowNum},
+        seat_number = #{seatNumber},
+        is_booked = #{isBooked}
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="Long">
-        DELETE FROM seats WHERE id = #{id}
+        DELETE FROM seats
+        WHERE id = #{id}
     </delete>
 
 </mapper>

@@ -219,6 +219,7 @@ public class ConsoleMenu {
     private void printReservation(Reservation reservation) {
         System.out.println("Reservation:");
         System.out.println("Reservation ID: " + reservation.getId());
+        System.out.println("Use this Reservation ID to find or cancel the reservation.");
         System.out.println("Session ID: " + reservation.getSessionId());
         System.out.println("Customer: " + reservation.getCustomerName());
 

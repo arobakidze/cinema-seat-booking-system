@@ -86,7 +86,10 @@ public class CinemaApp {
             }
 
             for (int i = 0; i < movies.size(); i++) {
-                System.out.println((i + 1) + ". " + movies.get(i));
+                Movie movie = movies.get(i);
+                System.out.println((i + 1) + ". " + movie.getTitle()
+                        + " (" + movie.getDurationMinutes() + " min)"
+                        + " Genres: " + movie.getGenres());
             }
 
             System.out.println("0. Back");
@@ -129,14 +132,14 @@ public class CinemaApp {
                 sessionIds.add(session.getId());
 
                 System.out.println(
-                        session.getId()
-                                + ". Hall: " + session.getHallId()
-                                + ", Start time: " + session.getStartTime()
+                        "Session ID " + session.getId()
+                                + " | Hall: " + session.getHallId()
+                                + " | Start time: " + session.getStartTime()
                 );
             }
 
             System.out.println("0. Back");
-            System.out.print("Select session ID: ");
+            System.out.print("Enter one of the shown session IDs: ");
 
             long sessionId = readLong();
 
