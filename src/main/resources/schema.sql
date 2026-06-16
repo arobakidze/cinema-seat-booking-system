@@ -1,38 +1,62 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+CREATE DATABASE IF NOT EXISTS cinema;
+USE cinema;
 
-<mapper namespace="com.cinema.persistence.mybatis.dao.MovieSessionDao">
+DROP TABLE IF EXISTS reservation_seats;
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS movie_sessions;
+DROP TABLE IF EXISTS seats;
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS cinema_halls;
 
-    <select id="findAll" resultType="com.cinema.domain.MovieSession">
-        SELECT
-            id,
-            movie_id AS movieId,
-            hall_id AS hallId,
-            start_time AS startTime
-        FROM movie_sessions
-        ORDER BY start_time
-    </select>
+CREATE TABLE cinema_halls
+(
+    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(100) NOT NULL,
+    total_rows    INT          NOT NULL,
+    seats_per_row INT          NOT NULL
+);
 
-    <select id="findByMovieId" parameterType="Long" resultType="com.cinema.domain.MovieSession">
-        SELECT
-            id,
-            movie_id AS movieId,
-            hall_id AS hallId,
-            start_time AS startTime
-        FROM movie_sessions
-        WHERE movie_id = #{movieId}
-        ORDER BY start_time
-    </select>
+CREATE TABLE seats
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    hall_id     BIGINT NOT NULL,
+    row_num     INT    NOT NULL,
+    seat_number INT    NOT NULL,
+    is_booked   BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (hall_id) REFERENCES cinema_halls (id)
+);
 
-    <select id="findById" parameterType="Long" resultType="com.cinema.domain.MovieSession">
-        SELECT
-            id,
-            movie_id AS movieId,
-            hall_id AS hallId,
-            start_time AS startTime
-        FROM movie_sessions
-        WHERE id = #{id}
-    </select>
+CREATE TABLE movies
+(
+    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title            VARCHAR(255) NOT NULL,
+    duration_minutes INT          NOT NULL,
+    genres           VARCHAR(255) NOT NULL
+);
 
-</mapper>
+CREATE TABLE movie_sessions
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    movie_id   BIGINT   NOT NULL,
+    hall_id    BIGINT   NOT NULL,
+    start_time DATETIME NOT NULL,
+    FOREIGN KEY (movie_id) REFERENCES movies (id),
+    FOREIGN KEY (hall_id) REFERENCES cinema_halls (id)
+);
+
+CREATE TABLE reservations
+(
+    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    session_id    BIGINT       NOT NULL,
+    customer_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES movie_sessions (id)
+);
+
+CREATE TABLE reservation_seats
+(
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    reservation_id BIGINT NOT NULL,
+    seat_id        BIGINT NOT NULL,
+    FOREIGN KEY (reservation_id) REFERENCES reservations (id),
+    FOREIGN KEY (seat_id) REFERENCES seats (id)
+);
