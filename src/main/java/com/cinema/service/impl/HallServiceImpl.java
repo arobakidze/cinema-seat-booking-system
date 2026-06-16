@@ -2,12 +2,17 @@ package com.cinema.service.impl;
 
 import com.cinema.domain.CinemaHall;
 import com.cinema.persistence.mybatis.dao.HallDao;
+import com.cinema.persistence.mybatis.dao.MovieDao;
 import com.cinema.service.HallService;
 import java.util.List;
 
 public class HallServiceImpl implements HallService {
 
     private HallDao hallDao;
+
+    public HallServiceImpl(HallDao hallDao) {
+        this.hallDao = hallDao;
+    }
 
     public void setHallDao(HallDao hallDao) {
         this.hallDao = hallDao;

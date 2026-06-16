@@ -4,6 +4,10 @@ import com.cinema.domain.Movie;
 import com.cinema.domain.MovieSession;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
+import com.cinema.service.impl.ReservationServiceImpl;
+import com.cinema.service.impl.SeatAllocationServiceImpl;
+import com.cinema.service.impl.SeatServiceImpl;
+import com.cinema.service.impl.HallServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,14 +18,22 @@ import java.util.Scanner;
 public class CinemaApp {
     private static final Logger LOGGER = LogManager.getLogger(CinemaApp.class);
 
+    private final HallServiceImpl hallService;
+    private final SeatServiceImpl seatService;
+    private final ReservationServiceImpl reservationService;
+    private final SeatAllocationServiceImpl seatAllocationService;
     private final MovieService movieService;
     private final MovieSessionService sessionService;
     private final Scanner scanner = new Scanner(System.in);
 
     public CinemaApp(MovieService movieService,
-                     MovieSessionService sessionService) {
+                     MovieSessionService sessionService, HallServiceImpl hallService, SeatServiceImpl seatService, ReservationServiceImpl reservationService, SeatAllocationServiceImpl seatAllocationService) {
         this.movieService = movieService;
         this.sessionService = sessionService;
+        this.hallService = hallService;
+        this.seatService = seatService;
+        this.reservationService = reservationService;
+        this.seatAllocationService = seatAllocationService;
     }
 
     public void start() {
@@ -32,7 +44,9 @@ public class CinemaApp {
 
             switch (choice) {
                 case 1 -> moviesMenu();
-                case 2 -> {
+                case 2 -> allAvailableSessionsMenu();
+                case 3 -> cancelingSeatsMenu();
+                case 4 -> {
                     LOGGER.info("project got closed");
                     System.out.println("👋 Goodbye!");
                     return;
@@ -50,17 +64,22 @@ public class CinemaApp {
         LOGGER.info("cinema menu shown");
         System.out.println("\n🎬 === CINEMA SYSTEM ===");
         System.out.println("1. View Movies");
-        System.out.println("2. Exit");
+        System.out.println("2. View available sessions");
+        System.out.println("3. cancel seats");
+        System.out.println("4. Exit");
         System.out.print("Choose: ");
     }
 
-//    private void allSessionsMenu(){
-//        while (true) {
-//            List<MovieSession> sessions = sessionService.getAllSessions();
-//
-//            LOGGER.info("ssessions menu shown");
-//            System.out.println("\n🎥 === SESSIONS ===");
-//
+    private void allAvailableSessionsMenu(){
+        while (true) {
+            List<MovieSession> sessions = sessionService.getAllSessions();
+
+            LOGGER.info("available sessions menu shown");
+            System.out.println("\n🎥 === AVAILABLE SESSIONS ===");
+
+            ///  your code  goes here hehe  ////
+
+
 //            for (MovieSession s : sessions) {
 //                ids.add(s.getId());
 //                LOGGER.info("{}. movie: {}, hall: {}, start time: {}", s.getId(), movieService.getMovie(movieId).getTitle(), s.getHallId(), s.getStartTime());
@@ -69,8 +88,35 @@ public class CinemaApp {
 //                        ", hall: " + s.getHallId() +
 //                        ",start time: " + s.getStartTime());
 //            }
-//        }
-//    }
+            System.out.println("0. Back");
+            System.out.print("Choose sessions: ");
+
+            int choice = readInt();
+
+            if (choice == 0) {
+                return;
+            }
+        }
+    }
+
+    private void cancelingSeatsMenu(){
+        while (true) {
+
+            System.out.println("\n🎥 === CANCELING SEATS ===");
+
+            ///  your code  goes here hehe  ////
+
+
+            System.out.println("0. Back");
+            System.out.print("Choose seat number: ");
+
+            int choice = readInt();
+
+            if (choice == 0) {
+                return;
+            }
+        }
+    }
 
     // ---------------- MOVIES ----------------
     private void moviesMenu() {

@@ -9,10 +9,10 @@
             <PatternLayout pattern="%p - %m%n"/>
         </Console>
         <File name="MAIN" fileName="logs/main.log">
-            <JsonTemplateLayout/>
+            <PatternLayout pattern="%d [%t] %-5level %logger - %msg%n"/>
         </File>
         <File name="DEBUG_LOG" fileName="logs/debug.log">
-            <PatternLayout pattern="%d [%t] %p %c - %m%n"/>
+            <PatternLayout pattern="%d [%t] %-5level %logger - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>

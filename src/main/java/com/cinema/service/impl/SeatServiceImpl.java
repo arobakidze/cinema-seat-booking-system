@@ -1,6 +1,7 @@
 package com.cinema.service.impl;
 
 import com.cinema.domain.Seat;
+import com.cinema.persistence.mybatis.dao.MovieDao;
 import com.cinema.persistence.mybatis.dao.SeatDao;
 import com.cinema.service.SeatService;
 import java.util.List;
@@ -8,6 +9,10 @@ import java.util.List;
 public class SeatServiceImpl implements SeatService {
 
     private SeatDao seatDao;
+
+    public SeatServiceImpl(SeatDao seatDao) {
+        this.seatDao = seatDao;
+    }
 
     public void setSeatDao(SeatDao seatDao) {
         this.seatDao = seatDao;
