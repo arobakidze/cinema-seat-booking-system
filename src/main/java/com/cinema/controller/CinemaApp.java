@@ -31,16 +31,19 @@ public class CinemaApp {
             int choice = readInt();
 
             switch (choice) {
-                case 1 -> moviesMenu();
-                case 2 -> {
+                case 1:
+                    moviesMenu();
+                    break;
+
+                case 2:
                     LOGGER.info("project got closed");
                     System.out.println("👋 Goodbye!");
                     return;
-                }
-                default -> {
+
+                default:
                     LOGGER.error("Invalid choice on cinema menu");
                     System.out.println("❌ Invalid option");
-                }
+                    break;
             }
         }
     }

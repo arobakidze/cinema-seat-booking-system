@@ -1,22 +1,32 @@
 package com.cinema.service;
 
 import com.cinema.domain.MovieSession;
-import com.cinema.persistance.mybatis.dao.MovieSessionDao;
+import com.cinema.persistence.mybatis.dao.MovieSessionDao;
 
 import java.util.List;
 
 public class MovieSessionService {
-    private final MovieSessionDao sessionDao;
 
-    public MovieSessionService(MovieSessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+    private final MovieSessionDao movieSessionDao;
+
+    public MovieSessionService(MovieSessionDao movieSessionDao) {
+        this.movieSessionDao = movieSessionDao;
     }
 
+    public List<MovieSession> findAll() {
+        return movieSessionDao.findAll();
+    }
+
+    public MovieSession findById(Long id) {
+        return movieSessionDao.findById(id);
+    }
+
+    public List<MovieSession> findByMovieId(Long movieId) {
+        return movieSessionDao.findByMovieId(movieId);
+    }
+
+    // Method name used by CinemaApp
     public List<MovieSession> getSessionsByMovie(Long movieId) {
-        return sessionDao.findByMovieId(movieId);
-    }
-
-    public MovieSession getSession(Long id) {
-        return sessionDao.findById(id);
+        return findByMovieId(movieId);
     }
 }

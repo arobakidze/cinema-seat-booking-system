@@ -1,8 +1,8 @@
 package com.cinema;
 
 import com.cinema.controller.CinemaApp;
-import com.cinema.persistance.mybatis.dao.MovieDao;
-import com.cinema.persistance.mybatis.dao.MovieSessionDao;
+import com.cinema.persistence.mybatis.dao.MovieDao;
+import com.cinema.persistence.mybatis.dao.MovieSessionDao;
 import com.cinema.service.MovieService;
 import com.cinema.service.MovieSessionService;
 import com.cinema.util.MyBatisUtil;
@@ -14,21 +14,13 @@ public class Main {
 
         try (SqlSession session = MyBatisUtil.getSession()) {
 
-            MovieDao movieDao =
-                    session.getMapper(MovieDao.class);
+            MovieDao movieDao = session.getMapper(MovieDao.class);
+            MovieSessionDao movieSessionDao = session.getMapper(MovieSessionDao.class);
 
-            MovieSessionDao sessionDao =
-                    session.getMapper(MovieSessionDao.class);
+            MovieService movieService = new MovieService(movieDao);
+            MovieSessionService movieSessionService = new MovieSessionService(movieSessionDao);
 
-            MovieService movieService =
-                    new MovieService(movieDao);
-
-            MovieSessionService movieSessionService =
-                    new MovieSessionService(sessionDao);
-
-            CinemaApp app =
-                    new CinemaApp(movieService, movieSessionService);
-
+            CinemaApp app = new CinemaApp(movieService, movieSessionService);
             app.start();
         }
     }
